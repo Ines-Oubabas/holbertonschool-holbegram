@@ -31,7 +31,7 @@ class _AddPictureState extends State<AddPicture> {
     );
 
     if (pickedFile != null) {
-      Uint8List imageBytes = await pickedFile.readAsBytes();
+      final Uint8List imageBytes = await pickedFile.readAsBytes();
       setState(() {
         _image = imageBytes;
       });
@@ -44,7 +44,7 @@ class _AddPictureState extends State<AddPicture> {
     );
 
     if (pickedFile != null) {
-      Uint8List imageBytes = await pickedFile.readAsBytes();
+      final Uint8List imageBytes = await pickedFile.readAsBytes();
       setState(() {
         _image = imageBytes;
       });
@@ -52,7 +52,7 @@ class _AddPictureState extends State<AddPicture> {
   }
 
   Future<void> signUpUser() async {
-    String res = await AuthMethode().signUpUser(
+    final String res = await AuthMethode().signUpUser(
       email: widget.email,
       password: widget.password,
       username: widget.username,
@@ -61,15 +61,25 @@ class _AddPictureState extends State<AddPicture> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(res),
-      ),
-    );
+    if (res == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('success'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(res),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final String username = widget.username;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -91,7 +101,7 @@ class _AddPictureState extends State<AddPicture> {
             ),
             const SizedBox(height: 28),
             Text(
-              'Hello, ${widget.username} Welcome to\nHolbegram.',
+              'Hello, $username Welcome to\nHolbegram.',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,

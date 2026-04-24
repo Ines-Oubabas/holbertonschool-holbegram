@@ -49,13 +49,13 @@ class AuthMethode {
         return 'Please fill all the fields';
       }
 
-      UserCredential userCredential =
+      final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      User? user = userCredential.user;
+      final User? user = userCredential.user;
 
       if (user == null) {
         return 'User not found';
@@ -71,7 +71,7 @@ class AuthMethode {
         );
       }
 
-      Users users = Users(
+      final Users users = Users(
         uid: user.uid,
         email: email,
         username: username,

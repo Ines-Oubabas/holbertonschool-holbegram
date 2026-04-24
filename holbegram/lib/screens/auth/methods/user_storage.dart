@@ -1,27 +1,31 @@
-import 'dart:typed_data';
-import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 class StorageMethods {
   final String cloudinaryUrl =
-      "https://api.cloudinary.com/v1_1/dnoprpylg/image/upload";
-  final String cloudinaryPreset = "holbegram_unsigned";
+      'https://api.cloudinary.com/v1_1/dnoprpylg/image/upload';
+  final String cloudinaryPreset = 'holbegram_unsigned';
 
   Future<String> uploadImageToStorage(
     bool isPost,
     String childName,
     Uint8List file,
   ) async {
-    String uniqueId = const Uuid().v1();
-    var uri = Uri.parse(cloudinaryUrl);
-    var request = http.MultipartRequest('POST', uri);
+    final String uniqueId = const Uuid().v1();
+    final Uri uri = Uri.parse(cloudinaryUrl);
+    final http.MultipartRequest request = http.MultipartRequest('POST', uri);
 
     request.fields['upload_preset'] = cloudinaryPreset;
     request.fields['folder'] = childName;
-    request.fields['public_id'] = isPost ? uniqueId : '';
 
-    var multipartFile = http.MultipartFile.fromBytes(
+    if (isPost) {
+      request.fields['public_id'] = uniqueId;
+    }
+
+    final http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
       'file',
       file,
       filename: '$uniqueId.jpg',
@@ -29,14 +33,17 @@ class StorageMethods {
 
     request.files.add(multipartFile);
 
-    var response = await request.send();
+    final http.StreamedResponse response = await request.send();
+    final List<int> responseData = await response.stream.toBytes();
+    final String responseBody = String.fromCharCodes(responseData);
 
     if (response.statusCode == 200) {
-      var responseData = await response.stream.toBytes();
-      var jsonResponse = jsonDecode(String.fromCharCodes(responseData));
+      final dynamic jsonResponse = jsonDecode(responseBody);
       return jsonResponse['secure_url'];
     } else {
-      throw Exception('Failed to upload image to cloudinary');
+      throw Exception(
+        'Failed to upload image to cloudinary: $responseBody',
+      );
     }
   }
 }

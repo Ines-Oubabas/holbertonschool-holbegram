@@ -18,11 +18,13 @@ class _SignUpState extends State<SignUp> {
       TextEditingController();
 
   bool _passwordVisible = true;
+  bool _confirmPasswordVisible = true;
 
   @override
   void initState() {
     super.initState();
     _passwordVisible = true;
+    _confirmPasswordVisible = true;
   }
 
   @override
@@ -106,18 +108,18 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 24),
                   TextFieldInput(
                     controller: passwordConfirmController,
-                    ispassword: !_passwordVisible,
+                    ispassword: !_confirmPasswordVisible,
                     hintText: 'Confirm Password',
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
                       alignment: Alignment.bottomLeft,
                       onPressed: () {
                         setState(() {
-                          _passwordVisible = !_passwordVisible;
+                          _confirmPasswordVisible = !_confirmPasswordVisible;
                         });
                       },
                       icon: Icon(
-                        _passwordVisible
+                        _confirmPasswordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
                         color: const Color.fromARGB(218, 226, 37, 24),
