@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user.dart';
+import '../screens/auth/methods/user_storage.dart';
 
 class AuthMethode {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -60,12 +61,22 @@ class AuthMethode {
         return 'User not found';
       }
 
+      String photoUrl = '';
+
+      if (file != null) {
+        photoUrl = await StorageMethods().uploadImageToStorage(
+          false,
+          'profilePics',
+          file,
+        );
+      }
+
       Users users = Users(
         uid: user.uid,
         email: email,
         username: username,
         bio: '',
-        photoUrl: '',
+        photoUrl: photoUrl,
         followers: [],
         following: [],
         posts: [],
