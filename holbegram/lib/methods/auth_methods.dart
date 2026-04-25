@@ -49,13 +49,13 @@ class AuthMethode {
         return 'Please fill all the fields';
       }
 
-      final UserCredential userCredential =
+      UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      final User? user = userCredential.user;
+      User? user = userCredential.user;
 
       if (user == null) {
         return 'User not found';
@@ -71,7 +71,7 @@ class AuthMethode {
         );
       }
 
-      final Users users = Users(
+      Users users = Users(
         uid: user.uid,
         email: email,
         username: username,
@@ -94,5 +94,14 @@ class AuthMethode {
     }
 
     return res;
+  }
+
+  Future<Users> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return Users.fromSnap(snap);
   }
 }

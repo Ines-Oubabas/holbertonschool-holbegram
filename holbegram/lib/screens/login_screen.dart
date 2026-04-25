@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           password: passwordController.text.trim(),
                         );
 
-                        if (!mounted) return;
+                        if (!context.mounted) return;
 
                         if (res == 'success') {
                           ScaffoldMessenger.of(context).showSnackBar(
