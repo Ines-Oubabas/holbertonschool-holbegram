@@ -309,8 +309,25 @@ Example:
 ```md
 ## App Preview
 
+### Login Screen
 ![Login Screen](screenshots/login.png)
+
+### Sign Up Screen
+![Sign Up Screen](screenshots/signup.png)
+
+### Home Screen
 ![Home Screen](screenshots/home.png)
+
+### Search Screen
+![Search Screen](screenshots/search.png)
+
+### Add Image Screen
+![Add Image Screen](screenshots/add_image.png)
+
+### Favorite Screen
+![Favorite Screen](screenshots/favorite.png)
+
+### Profile Screen
 ![Profile Screen](screenshots/profile.png)
 ```
 

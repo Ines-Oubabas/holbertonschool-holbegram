@@ -97,10 +97,18 @@ class AuthMethode {
   }
 
   Future<Users> getUserDetails() async {
-    User currentUser = _auth.currentUser!;
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser == null) {
+      throw Exception('No authenticated user');
+    }
 
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
+
+    if (!snap.exists) {
+      throw Exception('User document not found');
+    }
 
     return Users.fromSnap(snap);
   }
