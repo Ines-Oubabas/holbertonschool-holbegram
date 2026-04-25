@@ -302,13 +302,6 @@ This project was completed up to:
 
 ## Screenshots
 
-> You can add your screenshots here later.
-
-Example:
-
-```md
-## App Preview
-
 ### Login Screen
 ![Login Screen](screenshots/login.png)
 
@@ -329,7 +322,6 @@ Example:
 
 ### Profile Screen
 ![Profile Screen](screenshots/profile.png)
-```
 
 ---
 
