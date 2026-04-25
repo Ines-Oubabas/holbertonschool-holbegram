@@ -14,8 +14,17 @@ class Posts extends StatefulWidget {
 
 class _PostsState extends State<Posts> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).refreshUser();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserProvider>(context).getUser;
+    final userProvider = Provider.of<UserProvider>(context);
+    final currentUser = userProvider.getUser;
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('posts').snapshots(),
@@ -47,6 +56,8 @@ class _PostsState extends State<Posts> {
             final List likes = post['likes'] ?? [];
             final bool isLiked =
                 currentUser != null && likes.contains(currentUser.uid);
+            final bool isSaved = currentUser != null &&
+                currentUser.saved.contains(post['postId']);
 
             return Container(
               margin: EdgeInsetsGeometry.lerp(
@@ -86,14 +97,17 @@ class _PostsState extends State<Posts> {
                       const Spacer(),
                       IconButton(
                         onPressed: () async {
+                          final ScaffoldMessengerState messenger =
+                              ScaffoldMessenger.of(context);
+
                           await PostStorage().deletePost(
                             post['postId'] ?? '',
                             post['postId'] ?? '',
                           );
 
-                          if (!context.mounted) return;
+                          if (!mounted) return;
 
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          messenger.showSnackBar(
                             const SnackBar(
                               content: Text('Post Deleted'),
                             ),
@@ -140,7 +154,48 @@ class _PostsState extends State<Posts> {
                         const SizedBox(width: 16),
                         const Icon(Icons.send),
                         const Spacer(),
-                        const Icon(Icons.bookmark_border),
+                        IconButton(
+                          onPressed: () async {
+                            final ScaffoldMessengerState messenger =
+                                ScaffoldMessenger.of(context);
+                            final UserProvider provider =
+                                Provider.of<UserProvider>(
+                              context,
+                              listen: false,
+                            );
+
+                            if (provider.getUser == null) {
+                              await provider.refreshUser();
+                            }
+
+                            final user = provider.getUser;
+
+                            if (user == null) {
+                              if (!mounted) return;
+
+                              messenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text('User not found'),
+                                ),
+                              );
+                              return;
+                            }
+
+                            await PostStorage().savePost(
+                              user.uid,
+                              post['postId'] ?? '',
+                              List.from(user.saved),
+                            );
+
+                            await provider.refreshUser();
+                          },
+                          icon: Icon(
+                            isSaved
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            color: isSaved ? Colors.red : Colors.black,
+                          ),
+                        ),
                       ],
                     ),
                   ),
